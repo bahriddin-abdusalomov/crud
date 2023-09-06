@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CrudForEntity.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user/")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -29,9 +29,12 @@ namespace CrudForEntity.Controllers
         public async Task<IActionResult> Deleteasync([FromForm] int id)
             => Ok(await _service.DeleteAsync(id));
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetByIdAsync([FromForm] int id)
-            => Ok(await _service.GetByIdAsync(id));
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetByUserIdAsync(int Id)
+        {
+            var res = await _service.GetByIdAsync(Id);
+            return Ok(res);
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
