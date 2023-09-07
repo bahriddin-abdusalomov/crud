@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CrudForDapper.Controllers
 {
-    [Route("api/[students]")]
+    [Route("api/students")]
     [ApiController]
     public class StudentsController : ControllerBase
     {
@@ -23,5 +23,17 @@ namespace CrudForDapper.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromForm] long id)
             => Ok(await _service.DeleteAsync(id));
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(long id)
+            => Ok(await _service.GetByIdAsync(id));
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+            => Ok(await _service.GetAllAsync());
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync([FromForm] Students students)
+            => Ok(await _service.UpdateAsync(students));
     }
 }

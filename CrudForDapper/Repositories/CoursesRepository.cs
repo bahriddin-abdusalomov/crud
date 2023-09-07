@@ -1,43 +1,40 @@
 ﻿using CrudForDapper.Interfaces;
 using CrudForDapper.Models;
-using CrudForDapper.Repositories;
 using Dapper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using static Dapper.SqlMapper;
 
-namespace CrudForDapper.Repository
+namespace CrudForDapper.Repositories
 {
-    public class StudentRepository : BaseRepository, IStudentRepository
+    public class CoursesRepository : BaseRepository, ICoursesRepository
     {
-        public async Task<bool> CreateAsync(Students entity)
+        public async Task<bool> CreateAsync(Courses entity)
         {
             try
             {
-              await  _connection.OpenAsync();
-               
-                string query = "INSERT INTO public.students(id, first_name, last_name, course_id) " +
-                    "VALUES (@Id, @FirstName, @LastName, @CourseId);";
+                await _connection.OpenAsync();
+
+                string query = "INSERT INTO \"Courses\"(id, course_name, student_id) " +
+                    "VALUES (@Id, @CourseName, @StudentId);";
                 var result = await _connection.ExecuteAsync(query, entity);
                 return result > 0;
             }
-            catch(Exception ex)
+            catch 
             {
-                throw new Exception(ex.Message);
+                return false;
             }
-            finally 
+            finally
             {
-               await _connection.CloseAsync();
+                await _connection.CloseAsync();
             }
         }
 
-  
+
         public async Task<bool> DeleteAsync(long Id)
         {
             try
             {
                 await _connection.OpenAsync();
 
-                string query = "Delete From students Where id = @id";
+                string query = "Delete From \"Courses\" Where id = @id";
                 var result = await _connection.ExecuteAsync(query, new { id = Id });
                 return result > 0;
             }
@@ -51,39 +48,19 @@ namespace CrudForDapper.Repository
             }
         }
 
-        public async Task<IList<Students>> GetAllAsync()
+        public async Task<IList<Courses>> GetAllAsync()
         {
             try
             {
                 await _connection.OpenAsync();
 
-                string query = "Select * from students;";
-                var result = (await _connection.QueryAsync<Students>(query)).ToList();
-                return result ;
-            }
-            catch
-            {
-                return new List<Students>();
-            }
-            finally
-            {
-                await _connection.CloseAsync();
-            }
-        }
-
-        public async Task<Students> GetByIdAsync(long id)
-        {
-            try
-            {
-                await _connection.OpenAsync();
-
-                string query = "Select * from students Where id = @Id;";
-                var result = await _connection.QuerySingleAsync<Students>(query, new {Id = id});
+                string query = "Select * from \"Courses\";";
+                var result = (await _connection.QueryAsync<Courses>(query)).ToList();
                 return result;
             }
             catch
             {
-                return new Students();
+                return new List<Courses>();
             }
             finally
             {
@@ -91,13 +68,33 @@ namespace CrudForDapper.Repository
             }
         }
 
-        public async Task<bool> UpdateAsync(Students entity)
+        public async Task<Courses> GetByIdAsync(long id)
         {
             try
             {
                 await _connection.OpenAsync();
 
-                string query = $"UPDATE public.students SET  first_name=@FirstName, last_name=@LastName, course_id=@CourseId" +
+                string query = "Select * from \"Courses\" Where id = @Id;";
+                var result = await _connection.QuerySingleAsync<Courses>(query, new { Id = id });
+                return result;
+            }
+            catch
+            {
+                return new Courses();
+            }
+            finally
+            {
+                await _connection.CloseAsync();
+            }
+        }
+
+        public async Task<bool> UpdateAsync(Courses entity)
+        {
+            try
+            {
+                await _connection.OpenAsync();
+
+                string query = $"UPDATE \"Courses\" SET  course_name=@CourseName, student_id=@StudentId" +
                     $" WHERE id = {entity.Id};";
                 var result = await _connection.ExecuteAsync(query, entity);
                 return result > 0;
